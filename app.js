@@ -2,11 +2,20 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const uri = 'mongodb+srv://almantas88:almantas88@node-rest-shop-kt3ov.mongodb.net/test?retryWrites=true&w=majority';
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
-// app.use(morgan('dev'));
+mongoose.connect(uri, {  useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
+    );
+    const connection = mongoose.connection;
+    connection.once('open', () => {
+      console.log("MongoDB database connection established successfully");
+    });
+
+app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
