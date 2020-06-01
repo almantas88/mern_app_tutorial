@@ -7,6 +7,7 @@ const Product = require("../models/product");
 router.get("/", (req, res, next) => {
   Order.find()
     .select("product quantity _id")
+    .populate("product", "name")
     .exec()
     .then((docs) => {
       res.status(200).json({
@@ -72,7 +73,8 @@ router.post("/", (req, res, next) => {
 
 router.get("/:orderId", (req, res, next) => {
   Order.findById(req.params.orderId)
-  .select("_id product quantity")
+    .select("_id product quantity")
+    .populate("product", "_id name price")
     .exec()
     .then((order) => {
       res.status(200).json({
@@ -91,31 +93,31 @@ router.get("/:orderId", (req, res, next) => {
 });
 
 router.delete("/:orderId", (req, res, next) => {
-    const id = req.params.orderId;
-    Order.remove({ _id: id })
-      .exec()
-      .then((order) => {
-          if(!order){
-              return res.status(404).json({
-                  message: 'Order not found'
-              })
-          }
-        res.status(200).json({
-          message: "Order deleted",
-          request: {
-            description: "Creating a new order",
-            type: "POST",
-            url: "http://localhost:3000/order/",
-            body: {productId: 'String', quantity: 'Number'}
-          }
+  const id = req.params.orderId;
+  Order.remove({ _id: id })
+    .exec()
+    .then((order) => {
+      if (!order) {
+        return res.status(404).json({
+          message: "Order not found",
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({
-          error: err,
-        });
+      }
+      res.status(200).json({
+        message: "Order deleted",
+        request: {
+          description: "Creating a new order",
+          type: "POST",
+          url: "http://localhost:3000/order/",
+          body: { productId: "String", quantity: "Number" },
+        },
       });
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
 
 module.exports = router;
