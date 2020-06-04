@@ -4,6 +4,14 @@ const mongoose = require("mongoose");
 const Order = require("../models/orders");
 const Product = require("../models/product");
 
+/*
+  @ROUTE - .../orders
+  @METHOD - GET
+  @DESCRIPTION - getting information about ALL orders
+  @RETURNS -
+    SUCCES an array of orders with information about products
+    FAILURE an error with a message
+*/
 router.get("/", (req, res, next) => {
   Order.find()
     .select("product quantity _id")
@@ -32,6 +40,15 @@ router.get("/", (req, res, next) => {
     });
 });
 
+
+/*
+  @ROUTE - .../orders
+  @METHOD - POST
+  @DESCRIPTION - posting an order, storing product id to the order. First we check if a product exists then we post
+  @RETURN - 
+    SUCCESS - returns a success message wit the information of the posted order
+    FAILURE - an error with a message
+*/
 router.post("/", (req, res, next) => {
   Product.findById(req.body.productId)
     .then((product) => {
@@ -71,6 +88,15 @@ router.post("/", (req, res, next) => {
     });
 });
 
+
+/*
+  @ROUTE - .../:orderId
+  @METHOD - GET
+  @DESCRIPTION - getting information about a specific order using an id as a parameter
+  @RETURN - 
+    SUCCESS - returns an order object with the information of the order
+    FAILURE - an error with a message
+*/
 router.get("/:orderId", (req, res, next) => {
   Order.findById(req.params.orderId)
     .select("_id product quantity")
@@ -92,6 +118,15 @@ router.get("/:orderId", (req, res, next) => {
     });
 });
 
+
+/*
+  @ROUTE - .../:orderId
+  @METHOD - DELETE
+  @DESCRIPTION - delete a specific order with the id of the order
+  @RETURN - 
+    SUCCESS - returns a success message
+    FAILURE - returns an error with a message
+*/
 router.delete("/:orderId", (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
